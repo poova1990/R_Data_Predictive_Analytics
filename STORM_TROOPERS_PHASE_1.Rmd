@@ -1,0 +1,119 @@
+---
+title: "Student Enrollment and Graduation Rates In US Universities."
+author: "STORM_TROOPERS"
+date: "April 4, 2018"
+output: html_document
+---
+
+```{r}
+#Load the U.S. News and World Report's College Data  dataset  in college_data
+
+college_data=read.csv('College_Data.csv', sep=',')
+head(college_data)
+
+```
+```{r}
+#Summary Statistics
+summary(college_data)
+
+```
+```{r}
+#Descriptive Statistics
+
+sd(college_data$Top25perc)
+sd(college_data$F.Undergrad)
+sd(college_data$P.Undergrad)
+sd(college_data$Outstate)
+sd(college_data$PhD)
+
+```
+
+
+
+```{r}
+# Adding lattice for plotting
+library(lattice)
+
+histogram(college_data$Top25perc)
+
+histogram(college_data$F.Undergrad)
+
+histogram(college_data$P.Undergrad)
+
+histogram(college_data$Outstate)
+
+histogram(college_data$PhD)
+
+```
+
+```{r}
+# To Find the Outliers we used boxplot
+require(ggplot2)
+boxplot(college_data$F.Undergrad,college_data$P.Undergrad,college_data$Outstate,names=c("F.Undergrad","P.Undergrad","Outstate"))
+
+```
+
+
+```{r}
+#Finding the Skewness
+mean.displ=mean(college_data$Top25perc)
+median.displ=median(college_data$Top25perc)
+skewness_displ=3*(mean.displ-median.displ)/sd(college_data$Top25perc)
+skewness_displ
+
+mean.displ=mean(college_data$F.Undergrad)
+median.displ=median(college_data$F.Undergrad)
+skewness_displ=3*(mean.displ-median.displ)/sd(college_data$F.Undergrad)
+skewness_displ
+
+
+mean.displ=mean(college_data$P.Undergrad)
+median.displ=median(college_data$P.Undergrad)
+skewness_displ=3*(mean.displ-median.displ)/sd(college_data$P.Undergrad)
+skewness_displ
+
+mean.displ=mean(college_data$Outstate)
+median.displ=median(college_data$Outstate)
+skewness_displ=3*(mean.displ-median.displ)/sd(college_data$Outstate)
+skewness_displ
+
+mean.displ=mean(college_data$PhD)
+median.displ=median(college_data$PhD)
+skewness_displ=3*(mean.displ-median.displ)/sd(college_data$PhD)
+skewness_displ
+
+```
+
+```{r}
+#Finding the relationship between 2 variables for Dependent variable Enroll
+require(lattice)
+
+xyplot(college_data$Enroll~ college_data$Outstate)
+xyplot(college_data$Enroll~ college_data$PhD)
+xyplot(college_data$Enroll~ college_data$F.Undergrad)
+xyplot(college_data$Enroll~ college_data$College.Type)
+
+
+```
+
+```{r}
+#Finding the relationship between 2 variables for Dependent variable Grad.Rate
+xyplot(college_data$Grad.Rate~ college_data$F.Undergrad)
+xyplot(college_data$Grad.Rate~ college_data$P.Undergrad)
+xyplot(college_data$Grad.Rate~ college_data$Top25perc)
+
+```
+```{r}
+# Removing the outliers
+trimmed = college_data$F.Undergrad[-which(min(college_data$F.Undergrad) == college_data$F.Undergrad)]
+# Appliying transfomrations
+log.tr = log(trimmed)
+sqrt.tr = sqrt(trimmed)
+inv.sqrt.tr = 1/sqrt(trimmed)
+# Creating histograms for the transformed data for comparison
+par(mfrow = c(1, 4))
+hist(trimmed, main = "Raw Data ")
+hist(log.tr, main = "Log Transformtion")
+hist(sqrt.tr, main = " Square-root Transformation")
+hist(inv.sqrt.tr, main = "Inverse Square-root Transformation")
+```

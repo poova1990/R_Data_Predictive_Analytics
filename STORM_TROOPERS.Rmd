@@ -1,0 +1,324 @@
+---
+title: "Student Enrollment and Graduation Rates In US Universities."
+author: "STORM_TROOPERS"
+date: "April 4, 2018"
+output: html_document
+---
+
+```{r}
+#Load the U.S. News and World Report's College Data  dataset  in college_data
+
+college_data=read.csv('College_Data.csv', sep=',')
+head(college_data)
+
+```
+```{r}
+#Summary Statistics
+summary(college_data)
+
+```
+```{r}
+#Descriptive Statistics
+
+sd(college_data$Top25perc)
+sd(college_data$F.Undergrad)
+sd(college_data$P.Undergrad)
+sd(college_data$Outstate)
+sd(college_data$PhD)
+sd(college_data$S.F.Ratio)
+
+```
+
+
+
+```{r}
+# Adding lattice for plotting
+library(lattice)
+
+histogram(college_data$Top25perc)
+
+histogram(college_data$F.Undergrad)
+
+histogram(college_data$P.Undergrad)
+
+histogram(college_data$Outstate)
+
+histogram(college_data$PhD)
+
+histogram(college_data$S.F.Ratio)
+
+histogram(college_data$Room.Board)
+
+histogram(college_data$Expend)
+
+histogram(college_data$Top10perc)
+
+
+```
+
+```{r}
+# To Find the Outliers we used boxplot
+require(ggplot2)
+boxplot(college_data$F.Undergrad,college_data$P.Undergrad,college_data$Outstate,college_data$S.F.Ratio,names=c("F.Undergrad","P.Undergrad","Outstate","Student Faculty Ratio"))
+
+
+
+```
+
+
+```{r}
+#Finding the Skewness
+mean.displ=mean(college_data$Top25perc)
+median.displ=median(college_data$Top25perc)
+skewness_displ=3*(mean.displ-median.displ)/sd(college_data$Top25perc)
+skewness_displ
+
+mean.displ=mean(college_data$F.Undergrad)
+median.displ=median(college_data$F.Undergrad)
+skewness_displ=3*(mean.displ-median.displ)/sd(college_data$F.Undergrad)
+skewness_displ
+
+
+mean.displ=mean(college_data$P.Undergrad)
+median.displ=median(college_data$P.Undergrad)
+skewness_displ=3*(mean.displ-median.displ)/sd(college_data$P.Undergrad)
+skewness_displ
+
+mean.displ=mean(college_data$Outstate)
+median.displ=median(college_data$Outstate)
+skewness_displ=3*(mean.displ-median.displ)/sd(college_data$Outstate)
+skewness_displ
+
+mean.displ=mean(college_data$PhD)
+median.displ=median(college_data$PhD)
+skewness_displ=3*(mean.displ-median.displ)/sd(college_data$PhD)
+skewness_displ
+
+mean.displ=mean(college_data$S.F.Ratio)
+median.displ=median(college_data$S.F.Ratio)
+skewness_displ=3*(mean.displ-median.displ)/sd(college_data$S.F.Ratio)
+skewness_displ
+
+```
+
+```{r}
+#Finding the relationship between 2 variables for Dependent variable Enroll
+require(lattice)
+
+xyplot(college_data$Enroll~ college_data$Outstate)
+xyplot(college_data$Enroll~ college_data$PhD)
+xyplot(college_data$Enroll~ college_data$F.Undergrad)
+xyplot(college_data$Enroll~ college_data$College.Type)
+
+
+```
+
+```{r}
+#Finding the relationship between 2 variables for Dependent variable Grad.Rate
+xyplot(college_data$Grad.Rate~ college_data$F.Undergrad)
+xyplot(college_data$Grad.Rate~ college_data$P.Undergrad)
+xyplot(college_data$Grad.Rate~ college_data$Top25perc)
+xyplot(college_data$Grad.Rate~ college_data$S.F.Ratio)
+```
+
+
+```{r}
+# Removing the outliers using transformation for variables F.Undergrad and P.Undergrad which are not 
+# normally distributed
+
+
+#Log Transformation
+log.tr_F = log(college_data$F.Undergrad)
+log.tr_P = log(college_data$P.Undergrad)
+log.tr_Expend = log(college_data$Expend)
+log.tr_Top10 = log(college_data$Top10perc)
+
+#Square Transformation
+sqrt.tr_F = sqrt(college_data$F.Undergrad)
+sqrt.tr_P = sqrt(college_data$P.Undergrad)
+sqrt.tr_Expend = log(college_data$Expend)
+sqrt.tr_Top10 = log(college_data$Top10perc)
+
+#Inverse Square root Transformation
+inv.sqrt.tr_F = 1/sqrt(college_data$F.Undergrad)
+inv.sqrt.tr_P = 1/sqrt(college_data$F.Undergrad)
+inv.sqrt.tr_Expend = 1/sqrt(college_data$Expend)
+inv.sqrt.tr_Top10 = 1/sqrt(college_data$Top10perc)
+
+# Creating histograms for the transformed data for comparison
+hist(college_data$F.Undergrad, main = "Raw Data Fulltime Undergrad ")
+hist(college_data$P.Undergrad, main = "Raw Data Part time Undergrad ")
+hist(college_data$Expend, main = "Raw Data Expenditure ")
+hist(college_data$Top10perc, main = "Raw Data Top10Perc ")
+hist(log.tr_F, main = "Log Transformtion")
+hist(sqrt.tr_F, main = " Square-root Transformation")
+hist(inv.sqrt.tr_F, main = "Inverse Square-root Transformation")
+hist(log.tr_P, main = "Log Transformtion")
+hist(sqrt.tr_P, main = " Square-root Transformation")
+hist(inv.sqrt.tr_P, main = "Inverse Square-root Transformation")
+hist(log.tr_Expend, main = "Log Transformtion")
+hist(sqrt.tr_Expend, main = " Square-root Transformation")
+hist(inv.sqrt.tr_Expend, main = "Inverse Square-root Transformation")
+hist(log.tr_Top10, main = "Log Transformtion")
+hist(sqrt.tr_Top10, main = " Square-root Transformation")
+hist(inv.sqrt.tr_Top10, main = "Inverse Square-root Transformation")
+
+#Based on the different transformations, we observed that log transformation is the best fit to remove outliers.
+
+```
+
+
+```{r}
+college_data=cbind(college_data,log.tr_F,log.tr_P,log.tr_Expend,log.tr_Top10)
+college_data
+
+```
+
+```{r}
+#Creating a Multi linear regression model to predict grad rate for an university
+college_data
+Grad_data= 
+data.frame(college_data$Grad.Rate,
+college_data$Outstate,
+college_data$PhD,
+college_data$log.tr_F,
+college_data$log.tr_P,
+college_data$Room.Board,
+college_data$Books,
+college_data$Personal,
+college_data$S.F.Ratio,
+college_data$perc.alumni,
+college_data$log.tr_Expend,
+college_data$College.Type,
+college_data$Terminal,
+college_data$log.tr_Top10,
+college_data$Top25perc)
+
+Grad_data
+
+Grad_model = lm(college_data.Grad.Rate~college_data.Outstate+
+                college_data.PhD+college_data.log.tr_F+
+                college_data.log.tr_P+college_data.Room.Board+
+                college_data.Books+college_data.S.F.Ratio+
+                college_data.perc.alumni+college_data.log.tr_Expend+
+                college_data.College.Type+college_data.Terminal+
+                college_data.log.tr_Top10+college_data.Top25perc,data=Grad_data)
+
+Grad_model
+anova(Grad_model)
+
+#Dropping less significant variables and recreating the model for grad.rate
+Grad_model = lm(college_data.Grad.Rate~college_data.Outstate+
+                  college_data.PhD+
+                  college_data.log.tr_F+college_data.log.tr_P+college_data.Room.Board             +college_data.log.tr_Top10 +college_data.Top25perc +college_data.College.Type +college_data.log.tr_Expend,data=Grad_data)
+Grad_model
+#Regression Equation
+#Grad.Rate = 84.931097 + 0.001 * college_data.Outstate + 0.022 *college_data.PhD 
+# +3.15 *college_data.log.tr_F -1.322 *college_data.log.tr_P + 0.0021 *college_data.Room.Board +2.194 * 
+# college_data.Top10perc + 0.1631 *Top25perc - 6.863*college_data.College.TypePublic -8.538*college_data.log.tr_Expend
+anova(Grad_model)
+
+# Enroll Model
+
+Enroll_data= data.frame(college_data$Enroll,
+college_data$Outstate,
+college_data$PhD,
+college_data$log.tr_F,
+college_data$log.tr_P,
+college_data$Room.Board,
+college_data$Books,
+college_data$Personal,
+college_data$S.F.Ratio,
+college_data$perc.alumni,
+college_data$log.tr_Expend,
+college_data$College.Type,
+college_data$Terminal,
+college_data$log.tr_Top10,
+college_data$Top25perc)
+
+Enroll_data
+
+Enroll_model = lm(college_data.Enroll~college_data.Outstate+
+                college_data.PhD+college_data.log.tr_F+
+                college_data.log.tr_P+college_data.Room.Board+
+                college_data.Books+college_data.S.F.Ratio+
+                college_data.perc.alumni+college_data.log.tr_Expend+
+                college_data.College.Type+college_data.Terminal+
+                college_data.log.tr_Top10+college_data.Top25perc,data=Enroll_data)
+
+anova(Enroll_model)
+
+# Dropping less significant variables and recreating the model for enroll
+
+Enroll_model = lm(college_data.Enroll~college_data.log.tr_F+college_data.S.F.Ratio +college_data.Outstate
++ college_data.PhD +college_data.log.tr_Expend,data=Enroll_data)
+Enroll_model
+anova(Enroll_model)
+
+#Regression Line for Enroll_model
+# Enroll = -6.966 + 7.672 * Grad_data.college_data.log.tr_F -8.934 *college_data.S.F.Ratio -2.72 
+# *college_data.Outstate -1.387*college_data.PhD + 2.641 *college_data.log.tr_Expend
+
+```
+
+```{r}
+# Using Numerical variables and Predicting the college type 
+require(class)
+college_data=read.csv('College_Data.csv', sep=',')
+college_data
+college_data=cbind(college_data,Grad_data$college_data.log.tr_P)
+college_data
+college_data=cbind(college_data,Grad_data$college_data.log.tr_F)
+college_data
+
+# To normalize the data creating a function for reuse
+normalize<-function(x){
+  (x-min(x))/(max(x)-min(x))
+}
+
+# Taking the indepdendent variable which affects risk factor and normalizing the data
+input=college_data[,c('Grad_data$college_data.log.tr_F','Grad_data$college_data.log.tr_P','Top25perc','S.F.Ratio')]
+input.norm<-sapply(input, normalize)
+
+# Assinging the predicting variable to label
+label<-college_data$College.Type
+set.seed(1234)
+
+# Applying the sampling strategy 
+indicies=sample(1:2,length(college_data$College.Type), replace = T, prob=c(.8,.2))
+indicies
+
+# Assigning the values for training and Testing variable
+training.input=input.norm[indicies==1, ]
+training.input
+training.label=label[indicies==1]
+training.label
+testing.input=input.norm[indicies==2,]
+testing.input
+testing.label=label[indicies==2]
+testing.label
+require(class)
+
+set.seed(1234)
+
+#Applying Knn Model 
+predicted.label<-knn(train=training.input, cl=training.label, test=testing.input, k=27)
+predicted.label
+
+# Comparing predicted label and testing label
+data.frame(predicted.label, testing.label)
+
+#Shows the Proportions of college type variable
+prop.table(table(college_data$College.Type))
+
+# Predictive statistics for the Model
+table(predicted.label,testing.label)
+#Total Private college type 117 and 111 times the model predicted correctly.
+#Total Public college was 48 and 38 times the model predicted correctly.
+
+# Getting the percentage of accuracy for the model
+accuracy=sum(predicted.label==testing.label)/length(predicted.label) 
+accuracy
+# 90% of time the model gives correct output
+```
+
